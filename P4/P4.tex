@@ -1,0 +1,552 @@
+\input{preambulo.tex}
+
+%----------------------------------------------------------------------------------------
+%	TÍTULO Y DATOS DEL ALUMNO
+%----------------------------------------------------------------------------------------
+
+\title{	
+\normalfont \normalsize 
+\textsc{{\bf Ingeniería de Servidores (2014-2015)} \\ Grado en Ingeniería Informática \\ Universidad de Granada} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Memoria Práctica 4 \\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal 
+}
+
+\author{Antonio Javier Cabrera Gutiérrez } % Nombre y apellidos
+
+\date{\normalsize\today} % Incluye la fecha actual
+
+%----------------------------------------------------------------------------------------
+% DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Muestra el Título
+
+\newpage %inserta un salto de página
+
+\tableofcontents % para generar el índice de contenidos
+
+\listoffigures
+\listoftables
+
+
+\newpage
+\section{Instale la aplicación.¿Qué comandos permite listar benchmarks disponibles?}
+Para instalar Phoronix solo hay que utilizar el gestor de paquetes correspondiente a cada SO, en mi caso en CentOs que es donde lo he instalado he puesto: yum install phoronix-test-suite
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{phoronix1.png}  
+\label{figura1:}
+\caption{Instalación de Phoronix}
+\end{figure}
+Para comprobar que he instalado bien Phoronix podemos poner \textit{phoronix-test-suite system-info }, con esta orden phoronix nos da información del sistema donde lo hemos instalado
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{phoronix2.png}  
+\label{figura2:}
+\caption{Comprobacion de phoronix}
+\end{figure}
+Para instalar los benchmarks disponibles se pude hacer de dos formas, la primera poniendo \textit{phoronix-test-suite list-available-test} y la segunda es poniendo\footnote{\url{http://www.chw.net/2013/05/benchmark-multiplataforma-sin-complicaciones-phoronix-test-suite/}} \textit{phoronix-test-suite list-tests}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{phoronix3.png}  
+\label{figura3:}
+\caption{Lista de benchmarks disponibles}
+\end{figure}
+\section{Seleccione, instale y ejecute uno, comente los resultados}
+Yo he seleccionado el test gputest este benchmark es un punto de referencia multiplataforma para OpenGL que ofrece demostraciones y otras cargas de extres para hacer trabajar diversas areas de la GPU y sus drivers.\footnote{\url{https://openbenchmarking.org/test/pts/gputest}}
+Para instalar el benchmark escribimos \textit{phoronix-test-suite install gputest} 
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{gputest1.png}  
+\label{figura4:}
+\caption{Instalacion de gputest}
+\end{figure}
+Ahora procedemos a ejecutar con \textit{phoronix-test-suite benchmark gputest}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{gputest2.png}  
+\label{figura5:}
+\caption{Ejecución de gputest}
+\end{figure}
+Como se puede ver tiene diferentes configuraciones para realizar el test, como el tipo de gráfica que utilizar, la resolución y el modo.
+Yo he elegido la opción de gráfica se puede ver la gráfica cuando la ejecutamos.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{gputest3.png}  
+\label{figura6:}
+\caption{Gráfica en ejecución de gputest}
+\end{figure}
+Una vez acabado nos da los resultados nos ofrece poder verlos en el navegador.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{gputest4.png}  
+\label{figura7:}
+\caption{Resultados de gputest}
+\end{figure}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{gputest5.png}  
+\label{figura8:}
+\caption{Visualización en el navegador gputest}
+\end{figure}
+Como se puede ver en la sección de resultados nos da un valor, en nuestro caso el 54, el error estándar y la desviación estándar
+trabajo 
+\section{De los parámetros que le podemos pasar al comando ¿Qué significa -c 5 ?¿y -n 100? Monitorice la ejecución de ab contra alguna maquina. ¿ cuantos procesos o hebras crea ab en el cliente?}
+Con -c 5 estaríamos indicado el numero de peticiones multiplexadas en el cliente, en este caso 5, osea que la concurrencia máxima es 5.
+Con -n 100 le estaríamos diciendo que haga 100 conexiones a la maquina contra la que lo ejecutamos.
+Yo he ejecutado ab poniendo \textit{ab -n 1000000 -c 100 http://www.ugr.es/}, estoy ejecutando un millón de conexiones y con una concurrencia de 100. Estos son los datos que mostraría:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{ab1.png}  
+\label{figura9:}
+\caption{Ejecucion ab}
+\end{figure}
+Ejecutamos la orden top -H mientras la orden ab se ejecuta podemos ver las hebras que ha generado ab, en este caso vemos que solo crea una en el cliente. \footnote{\url{https://en.wikipedia.org/wiki/ApacheBench}} Es de extrañar ya que el resultado esperado es que ejecute tantas hebras como nosotros le indiquemos en la orden. Pero solo me sale una hebra.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{ab2.png}  
+\label{figura10:}
+\caption{Muestra de los procesos en el sistema cuando ab se esta ejecutando}
+\end{figure}
+También he probado esta misma orden pero cambiando el servidor ugr por el de localhost y ejecutando la orden top -H para ver los procesos que se están ejecutando con sus hebras podemos ver que en ab solo se ha ejecutado un proceso y en cambio apache ha ejecutado muchas hebras para atender a las conexiones.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{ab3.png}  
+\label{figura11:}
+\caption{Procesos creados por apache}
+\end{figure}
+\section{Ejecute ab contra a las tres máquinas virtuales una a una y muestre y comente las estadísticas.¿cual es la que proporciona mejores resultados?. Fijase en el numero de bytes transferidos, ¿ es igual para cada maquina?}
+Primero he comenzado con ubuntu server. He ejecutado ab de la siguiente forma:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{ubuntu.png}  
+\label{figura12:}
+\caption{Orden ab contra ubuntu}
+\end{figure}
+Como se puede ver he utilizado -n 100 y -c 5 el significado de esto esta explicado en la anterior pregunta. El resultado de la ejecución es el siguiente:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{ubuntu1.png}  
+\label{figura13:}
+\caption{Resultado en ubuntu}
+\end{figure}
+Luego comentare estos resultados, ahora procedo a realizar lo mismo pero en centos.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{centos.png}  
+\label{figura14:}
+\caption{Orden ab contra centos}
+\end{figure}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{centos1.png}  
+\label{figura15:}
+\caption{Resultado en centos}
+\end{figure}
+Ahora procedo a hacer lo mismo en windows server 2012.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{windows.png}  
+\label{figura16:}
+\caption{Resultado en windows}
+\end{figure}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{windows1.png}  
+\label{figura17:}
+\caption{Resultado en windows}
+\end{figure}
+En cuanto a los resultados obtenidos comenzaremos mirando 3 parámetros, el tiempo en hacer el test ( Time taken for tests), los bytes transferidos ( Total transferred) y las peticiones por segundos (Requests per second).
+Primero miramos el time taken for tests:
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+{\bf Ubuntu} & {\bf Centos} & {\bf Windows Server} \\
+\hline
+0.080 & 0.059 & 0.028 \\
+\hline
+\end{tabular}  
+\caption{Comparativa Time taken for tests} \label{tab:tabla1}
+\end{table} 
+Podemos ver que el tiempo es parecido entre los tres, pero parece que Windows Server es mas rápido que Centos y Ubuntu.
+Ahora miramos los bytes transferidos.
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+{\bf Ubuntu} & {\bf Centos} & {\bf Windows Server} \\
+\hline
+1178300 & 529600 & 164200 \\
+\hline
+\end{tabular}  
+\caption{Comparativa Total Trasnferred} \label{tab:tabla2}
+\end{table} 
+Se puede apreciar que los bytes transferidos en cada sistema son de menor a mayor: Windows Server, Centos, Ubuntu. Quizá esto puede ser el motivo por lo que Windows Server ha tardado menos que los otros dos sistemas ya que ha transferido menos bytes para realizar la prueba, lo mismo podría pasar con ubuntu, que ha transferido casi 9 veces mas bytes que windows, este puede ser el motivo por lo que ubuntu ha tardado mas en realizar la prueba, casi 4 veces mas que windows. Por ultimo vamos a ver las peticiones por segundo:
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+{\bf Ubuntu} & {\bf Centos} & {\bf Windows Server} \\
+\hline
+1250.17 & 1705.52 & 3542.58 \\
+\hline
+\end{tabular}  
+\caption{Comparativa Requests per second} \label{tab:tabla3}
+\end{table} 
+En esta tabla se puede apreciar como Windows Server puede atender casi 3 veces mas peticiones que Ubuntu por segundo, esto lo hace ser el sistema mas rápido entre los tres, por lo que podemos concluir en consecuencia de los datos comparados previamente que Windows Server es el mas rápido de los tres sistemas, lo sigue CentOS y por ultimo esta Ubuntu que es el mas lento de los 3.
+\section{¿Que es Scala? Instale Gatling y pruebe los escenarios por defecto.}
+Scala es un lenguaje de programación diseñado para expresar patrones comunes de programación de forma concisa, elegante y con tipos seguros. Sus características principales es que es orientado a objetos, es un lenguaje funcional, tipado estático y su extensibilidad. Su nombre, Scala, proviene de escalable y lenguaje. Es parecido a java ya que tiene similitudes como la orientación a objetos o como que se ejecuta sobre una Java Virtual Machine, pero se diferencia básicamente porque Scala reduce el numero de lineas de código que se escriben y que el código de Scala es menos legible que el de Java.\footnote{\url{https://geekytheory.com/curso-scala-parte-1-que-es-scala/}} Un ejemplo del Hola mundo en este lenguaje seria el siguiente:\footnote{\url{https://es.wikipedia.org/wiki/Scala_lenguaje_de_programacion}}
+\begin{verbatim}
+object HolaMundo {
+  def main(args: Array[String]) {
+    println("Hola mundo")
+  }
+}
+\end{verbatim}
+Ahora voy a proceder a instalar Gatling, hay que acceder a su pagina oficial y descargar un zip.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{gatling1.png}  
+\label{figura19:}
+\caption{Descargar Gatling}
+\end{figure}
+Descomprimimos el zip y accedemos a la carpeta correspondiente como se puede ver en la imagen y ejecutamos el script gatling.sh.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{gatling2.png}  
+\label{figura20:}
+\caption{Directorios Gatling}
+\end{figure}
+Ahora nos da a elegir unos escenarios de prueba para poder ejecutar, yo he elegido el 5. Estos escenarios son representativos de lo que realmente sucede cuando los usuarios navegan por gatling.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{gatling3.png}  
+\label{figura21:}
+\caption{Selección de un escenario de prueba en Gatling}
+\end{figure}
+Ahora nos indica que pongamos un id de simulación yo he puesto practicaISE, seguidamente nos pide una descripción una vez puesta comienza la prueba.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{gatling4.png}  
+\label{figura22:}
+\caption{Comienzo de la prueba en Gatling}
+\end{figure}
+Una vez acaba nos sale un resumen de la información recogida y nos indica que los reportes de la simulación esta en un html.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{gatling5.png}  
+\label{figura23:}
+\caption{Finalización de la prueba con Gatling}
+\end{figure}
+Abrimos con el navegador el index.html correspondiente a la prueba que estara guardado en el directorio results, uno de los directorios de gatling visto antes.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{gatling6.png}  
+\label{figura24:}
+\caption{Visualizacion de la primera prueba con Gatling}
+\end{figure}
+Aquí podemos ver la primera prueba los datos expresados en gráficas, hay dos pestañas, una donde viene la información global y otra la información detalla. Voy a comentar un poco las gráficas obtenidas:
+En la pestaña de global podemos ver entre las gráficas mostrada una que nos muestra los usuarios conectados durante la simulación
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{gatling7.png}  
+\label{figura25:}
+\caption{Usuarios conectados prueba uno Gatling}
+\end{figure}
+Se puede ver una linea del tiempo y si ponemos el cursor encima de las lineas nos dice los usuario y los administradores conectados en cada instante.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{gatling8.png}  
+\label{figura26:}
+\caption{Numero de peticiones y respuestas prueba uno Gatling}
+\end{figure}
+En estas dos gráficas podemos ver el numero de peticiones y de respuestas durante la simulación, las que están en rojo son las respuestas o peticiones fallidas.
+En la pestaña de detalles se puede ver las acciones realizadas durante la simulación de forma detallada.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{gatling9.png}  
+\label{figura27:}
+\caption{Pestaña de los detalles de la prueba uno en Gatling}
+\end{figure}
+Segun gatling\footnote{\url{http://gatling.io/docs/2.0.0-RC2/quickstart.html}} este escenario probado, el 5, simula cuando un usuario crea un nuevo modelo. Ahora procederé a probar el escenario numero 1 que según gatling simula cuando el usuario busca "mcbook".
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{gatling10.png}  
+\label{figura28:}
+\caption{Visualización de la segunda prueba con Gatling}
+\end{figure}
+En esta imagen se puede ver la visualización de la segunda prueba en la pestaña global, como se puede apreciar y en comparación con la anterior prueba el numero de peticiones que nos muestra es mucho menor que en la primera prueba, no hay ninguna peticiones fallidas cosa que en cambio en la primera ejecución si hubo.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{gatling11.png}  
+\label{figura29:}
+\caption{Numero de peticiones y respuestas prueba dos Gatling}
+\end{figure}
+Se puede apreciar que el numero de respuestas y peticiones por cada medio segundo nunca supera a dos, sin embargo en la anterior ejecución estaba alrededor de 6 o 7 peticiones y respuestas por cada medio segundo a veces llegando a 10. Por lo que podemos concluir que la segunda prueba ha sido mas ligera que la primera prueba que hicimos.
+\section{Lea el articulo y elabore un breve resumen}
+En este articulo, el autor hace una comparación lo mas objetiva posible entre estos dos benchmark, JMeter y Gatling. Para probarlos lo que hace es elegir un servidor HTTP, el autor elige nginx y afirma que es un servidor extremadamente rápido y lo configura para que el sitio pueda comportarse como un servidor de aplicaciones. También dice que modificaron el SO, la red y metieron 4 CPUs y 15 GB de RAM para asegurarse de que no hubiese cuellos de botella. Como se puede ver el autor lo prepara todo para poder comparar de forma objetiva estos dos benchmark.
+Crea un escenario de carga formado por diferentes tipos de transacciones realizadas por el usuario. La carga que ellos han usado sera de 10 mil usuarios en concurrencia, 30 mil peticiones por minutos y durara 20 minutos con 10 minutos de "rampup". Tras realizar la prueba el autor concluye que en términos de concurrencia y de rendimiento hay poco que diferenciar entre Gatling y JMeter. Ahora bien, Gatling tiene algunas limitaciones en la capacidad de registrar con precision la carga útil de respuesta en bytes por lo que si se quiere medir habría que meter monitores externos. JMeter muestra un mayor uso de la CPU, memoria y rendimiento de la JVM, pero puede gestionar la carga cuando se ejecuta con la asignación de memoria adecuada. En resumen, después de hacer la comparación el autor nos dice que la elección entre una herramienta u otra es puramente subjetivo.
+\section{Instale y siga el tutorial realizando capturas de pantalla y comentándolas. En vez de usar la web de jmeter, haga el experimento usando alguna de sus máquinas virtuales. (Puede hacer una pagina sencilla, usar las paginas de phpmyadmin, instalar un CMS, etc.).}
+Para su instalación lo que hay que haces es muy similar a Gatling, vamos su pagina principal y nos descargamos el zip.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{jmeter.png}  
+\label{figura30:}
+\caption{Pagina de descarga de jmeter}
+\end{figure}
+Descomprimimos el zip y ejecutamos jmeter con \textit{./bin/jmeter.sh} y nos aparecerá la siguiente pantalla.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{jmeter1.png}  
+\label{figura31:}
+\caption{Ventana de JMeter}
+\end{figure}
+Ahora voy a seguir el ejemplo que hay en la pagina web de jmeter \url{http://jmeter.apache.org/usermanual/build-web-test-plan.html} 
+Primero le damos a añadir-> hilos usuario-> grupo de hilos.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{jmeter2.png}  
+\label{figura32:}
+\caption{Paso 1}
+\end{figure}
+En esta pantalla podemos elegir el numero de usuarios a simular (Numero de Hilos) el periodo de Rampup y el contador de bucle que es el numero de repeticiones de la simulación. Ponemos los numero de que nos indica en el tutorial de jmeter.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{jmeter3.png}  
+\label{figura33:}
+\caption{Creacion de la simulacion}
+\end{figure}
+Ahora como vamos a hacer una simulación para http tenemos que añadir lo siguiente, le damos a añadir->elemento de configuración->valores por defecto para petición http.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{jmeter4.png}  
+\label{figura34:}
+\caption{Paso 2}
+\end{figure}
+Ahora introducimos el nombre del servidor, en este caso ponemos el nuestro ya que el ejercicio nos dice que usemos una de nuestras máquinas virtuales, yo he puesto la de centos.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{jmeter5.png}  
+\label{figura35:}
+\caption{Paso 3}
+\end{figure}
+Ahora añadimos las peticiones HTTP que vamos a hacer, para eso hacemos añadir->muestreador->petición HTTP
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{jmeter6.png}  
+\label{figura36:}
+\caption{Paso 4}
+\end{figure}
+Ahora ponemos el nombre de la petición, el nombre del servidor no hay que volver a especificarlo ya que lo hemos hecho antes, como esta petición http es una consulta tenemos que especificar que pagina hay que consultar, yo he instalado el CMS Wordpress y voy a acceder a la pagina index.php.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{jmeter7.png}  
+\label{figura35:}
+\caption{Paso 5}
+\end{figure}
+Ahora hacemos lo mismo para crear otra petición, ponemos la ruta del php al que queremos consultar.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{jmeter8.png}  
+\label{figura35:}
+\caption{Paso 6}
+\end{figure}
+Por ultimo le damos a añadir->Receptor->Gráfico de Resultados para añadir una gráfica donde se mostraran los resultados de la simulación.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{jmeter9.png}  
+\label{figura36:}
+\caption{Paso 7}
+\end{figure}
+Especificamos la ruta donde se tiene que guardar el archivo donde se guardaran los datos de la simulación y le damos a simular.
+El resultado es el siguiente:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{jmeter10.png}  
+\label{figura37:}
+\caption{Gráfica de los resultados}
+\end{figure}
+Como se puede apreciar la gráfica no han salido muchos puntos, esto es por que el numero de muestras ha sido 20, 10 muestras por cada repetición, si ahora volvemos a hacer la misma simulación pero poniendo que en vez de que se repita dos veces ponemos que se repita 20 el numero de muestras aumenta a 200 por lo que en la gráfica salen mas puntos, este es el resultado.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{jmeter11.png}  
+\label{figura38:}
+\caption{Gráfica de los resultados cambiando las repeticiones}
+\end{figure}
+\section{Seleccione un benchmark entre SisoftSandra y Aida. Ejecutelo y muestre capturas de pantalla comentando los resultados}
+He elegido el bechmark AIDA64, me he descargado la version de prueba ya que es de pago y lo he ejecutado en Windows ya que no esta para Linux.
+Para instalarlo es muy sencillo, es el típico instalador de Windows donde se le da a siguiente todo el rato para instalar. Cuando abrimos AIDA nos muestra esta pantalla:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{ISE1.PNG}  
+\label{figura39:}
+\caption{Ventana principal de AIDA}
+\end{figure}
+Tiene muchas opciones como se puede ver, te puede generar informes con las características de todos los componentes tanto software como hardware del equipo. Por ejemplo yo le he dado a Equipo-> Resumen para que me muestre un resumen del equipo.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{ISE2.PNG}  
+\label{figura40:}
+\caption{Resumen equipo con AIDA}
+\end{figure}
+Le he dado también a que muestre información sobre mi CPU.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{ISE3.PNG}  
+\label{figura41:}
+\caption{Resumen de la CPU con AIDA}
+\end{figure}
+Ahora le he dado a rendimiento donde existen pruebas para medir el rendimiento tanto de la cpu como de la memoria, al terminar la ejecución el benchmark te da una puntuación.
+El primero que he ejecutado es la prueba CPU AES, que según AIDA \footnote{\url{http://www.aida64.com/products/features/benchmarking}}
+esta prueba mide el rendimiento de la CPU usando el algoritmo de cifrado AES. Este es el resultado del informe generado. Mi puntuación esta resaltada en negrita.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{ISE4.PNG}  
+\label{figura42:}
+\caption{Ejecucion de la prueba CPU AES con AIDA}
+\end{figure}
+Ahora he probado la prueba de la latencia de memoria. En este caso la puntuación se realiza teniendo en cuenta que el valor menor es mejor que un valor mayor.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{ISE5.PNG}  
+\label{figura43:}
+\caption{Prueba de latencia de memoria con AIDA}
+\end{figure}
+Por ultimo he probado la prueba FPU Julia, esta prueba consiste en medir el rendimiento del punto flotante a traves del calculo de varios marcos del fractal de julia, AIDA dice que este código esta muy optimizado y escrito en ensamblador. El resultado es el siguiente.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{ISE6.PNG}  
+\label{figura44:}
+\caption{Ejecucion de la prueba FPU Julia con AIDA}
+\end{figure}
+
+\section{Programe un benchmark usando el lenguaje que desee. El benchmark debe incluir: 1) Objetivo del benchmark 2) Metricas(unidades, variables, puntuaciones,etc.) 3) Instrucciones para su uso 4) Ejemplo de uso analizando los resultados }
+Este benchmark intenta factorizar números enteros de gran envergadura, el problema de la factorizacion consiste en descomponer un numero en divisores primos que todos multiplicados den el numero a factorizar, cuando los números son grandes como en este caso no se conoce un algoritmo que resuelva de forma eficiente este problema, por eso el problema de la factorizacion de un numero primo produce mucha carga computacional a la maquina en la que ejecutamos el programa por lo que yo he elegido hacer este benchmark ya que seria como una especie de test de extres a la cpu de la maquina.\footnote{\url{https://es.wikipedia.org/wiki/Factorizacion_de_enteros}}
+El objetivo de este benchmark seria medir la velocidad de la cpu en descomponer en factores un numero primo grande, el algoritmo iría probando números primos y lo dividiría por el numero primo al factorizar, como el único divisor del numero primo es el mismo, el algoritmo iría probando hasta llegar al propio numero.\\ Por otra parte los números que factorizara el benchmark serán los llamados números primos de Mersenne \footnote{\url{https://es.wikipedia.org/wiki/Numero_primo_de_Mersenne}}
+Un numero M es un numero de Mersenne si es una unidad menor que una potencia de dos. Ademas una de las condiciones para que sea primo el numero es que el n al que elevamos dos debe de ser primo.
+Los números que el benchmark ejecutara serán los siguientes
+127,8191, 131071, 524287. \\El benchmark factorizara estos números y dara una puntuacion final, para obtener esta puntuacion el programa coje los tiempos que ha tardado en factorizar estos numeros y los suma, por lo que esta puntuacion sera una medida de tiempo expresada en milisegundos, esto lo repetimos 100 veces y luego hacemos la media aritmetica de las 99 ultimas veces para obtener el tiempo medio que ha tardado en factorizar los 4 numeros , es decir sin contar con la primera ya que pueden aparecer factores de inicializacion de la pila o algun otro factor que haga que el primer tiempo este descomensado con los demas. La media artimetica la he elegido ya que no hay diferente peso entre las 99 medidas que he hecho, todas tienen el mismo peso. Contra menor sea el resultado del benchmark mas rapida sera la CPU ya que el resultado obtenido basicamente es la suma de los tiempos en milisegundos en factorizar los 4 numeros.
+\\Para poder correr el programa hace falta ejecutarlo en un sistema con JRE o JVM ya que esta hecho en java. Para compilar el código fuente basta con escribir en la terminal \textit{javac fact.java}, y para su ejecución \textit{java fact}
+\\El código fuente seria el siguiente:
+\begin{verbatim}
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+
+
+public class fact{
+    // funcion que comprueba que el numero es primo.
+    public static boolean prime(BigInteger n)
+    {
+        if(n.compareTo(BigInteger.ONE)==0 || n.compareTo(new BigInteger("2"))==0)
+        {
+            return true;
+        }
+        BigInteger mitad=n.divide(new BigInteger("2"));
+
+        for(BigInteger i=new BigInteger("3"); i.compareTo(mitad)<=0;
+        i=i.add(new BigInteger("2")))
+        {// si no se puede dividir entre ningun numero es primo.
+
+            if(n.mod(i).equals(BigInteger.ZERO))
+            {
+                return false; 
+            }
+
+        }
+            return true;
+
+    }
+    public static List<BigInteger> primeFactorBig(BigInteger a){
+        List<BigInteger> factores = new LinkedList<BigInteger>();
+       
+        //Desde i=2 mientras i sea menor que el numero y a no sea 1, i++
+        for (BigInteger i = BigInteger.valueOf(2); i.compareTo(a) <= 0 
+        && !a.equals(BigInteger.ONE); i = i.add(BigInteger.ONE)){
+            while (a.remainder(i).equals(BigInteger.ZERO) && prime(i)) { 
+            //si el numero es dibisible y es primo entonces es factor
+                factores.add(i); //lo ponemos en la lista
+                a = a.divide(i); //y lo dividimos entres su factor
+            }
+        }
+        return factores;
+    }
+    public static void main(String[] args){
+
+
+        
+        List<BigInteger> numeros=new LinkedList<BigInteger>();
+        numeros.add(new BigInteger("127"));
+	numeros.add(new BigInteger("8191"));
+        numeros.add(new BigInteger("131071"));
+        numeros.add(new BigInteger("524287"));
+       
+       
+     
+        //ArrayList<Long> tiempos =new ArrayList<Long>();
+        List<BigInteger> factores=new LinkedList<BigInteger>();
+        ArrayList<Double> media=new ArrayList<Double>();
+	for(int j=0;j<100;j++){
+		double puntuacion=0;
+		ArrayList<Long> tiempos =new ArrayList<Long>();
+		for(int i=0;i<numeros.size();i++){
+		    long time_start, time_end;
+		    time_start = System.currentTimeMillis();
+		    factores=primeFactorBig(numeros.get(i));
+		    time_end = System.currentTimeMillis();
+		    
+		
+		    tiempos.add(time_end-time_start);
+		
+			
+		}
+		for(int k=0;k<tiempos.size();k++){
+			puntuacion+=tiempos.get(k);   
+		}
+		media.add(puntuacion);
+		
+	}
+	double total=0;
+	for(int i=1;i<media.size();i++){
+		total+=media.get(i);
+	}
+	total/=(media.size()-1);
+	
+        double varianza=0;
+	for(int i=0;i<media.size();i++){
+		varianza+=(media.get(i)-total)*(media.get(i)-total);
+	}	
+	varianza=varianza/(media.size()-1);
+        
+        System.out.println("TIEMPO MEDIO SISTEMA: "+total);
+	//System.out.println("VARIANZA "+varianza);
+    }   
+}
+\end{verbatim}
+La varianza la he comentado ya que al usuario final no le interesa la varianza obtenida si no el resultado.
+Si se quisiese mostrar la varianza solo habria que descomentarla. 
+Aquí adjunto una salida del programa.
+
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{benchmark.png}  
+\label{figura45:}
+\caption{Ejecución del benchmark en mi maquina}
+\end{figure}
+Esta ejecucion la he realizado en mi maquina cuya CPU es:
+Intel(R) Core(TM) i7-5500U CPU \@ 2.40GHz.
+
+Tambien lo he probado en un Linux con una CPU AMD A4-5000 APU with Radeon(TM) HD Graphics. Este es el resultado.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{timoteis.png}  
+\label{figura46:}
+\caption{Ejecución del benchmark en otra maquina.}
+\end{figure}
+Como se puede ver mi resultado es menor por lo que mi CPU es mas rapida. Ahora bien, segun la varianza obtenida podemos concluir con que estos datos son significativos en el primer CPU, en el segundo la varianza es muy alta ya que podria ser que al ser una CPU mas lenta podrian influir algunos factores externos durante la ejecucion del benchmark por lo que los datos en la segunda CPU no son significativos.
+\end{document}

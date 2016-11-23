@@ -1,0 +1,479 @@
+\input{preambulo.tex}
+
+%----------------------------------------------------------------------------------------
+%	TÍTULO Y DATOS DEL ALUMNO
+%----------------------------------------------------------------------------------------
+
+\title{	
+\normalfont \normalsize 
+\textsc{{\bf Ingeniería de Servidores (2014-2015)} \\ Grado en Ingeniería Informática \\ Universidad de Granada} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Memoria Práctica 3 \\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal 
+}
+
+\author{Antonio Javier Cabrera Gutiérrez } % Nombre y apellidos
+
+\date{\normalsize\today} % Incluye la fecha actual
+
+%----------------------------------------------------------------------------------------
+% DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Muestra el Título
+
+\newpage %inserta un salto de página
+
+\tableofcontents % para generar el índice de contenidos
+
+\listoffigures
+
+
+
+\newpage
+\section{Cuestión 1}
+\subsection{¿Qué archivo le permite ver que programas se han instalado con el gestor de paquetes?}
+El archivo /var/log/apt/history.log
+\subsection{Qué significan las terminaciones .1.gz o .2.gz de los archivos en ese directorio?}
+Linux coje los ficheros .log y periódicamente si el archivo es muy grande los comprime en gz, esto se llama rotación de logs, los datos mas antiguos los pone en otros ficheros para que el primero no sea muy grande. El numero 1 o 2 es el orden en el que lo ha comprimido siendo el valor menor el ultimo en comprimir. Linux gestiona esto a través del demonio logrotate que esta configurado en este caso para apt de la siguiente forma en mi ordenador. Para obtener el archivo vamos a /etc/logrotate.d/apt
+\begin{verbatim}
+/var/log/apt/term.log {
+  rotate 12
+  monthly
+  compress
+  missingok
+  notifempty
+}
+
+/var/log/apt/history.log {
+  rotate 12
+  monthly
+  compress
+  missingok
+  notifempty
+}
+\end{verbatim}
+rotate 12 quiere decir que se mantendrán los últimos 13 ficheros rotados. es decir el .1.gz hasta el .13.gz o sea que rotara 12 veces. monthly quiere decir que los archivos se rotaran cada mes. compress quiere decir que se comprime el archivo rotado. missingok quiere decir que si el fichero log no existe no devuelve error. \footnote{\url{http://helloit.es/2012/08/rotar-archivos-de-log-con-logrotate/}}
+\section{Indique que comando ha utilizado para realizarlo así como capturas de pantalla del proceso de reconstrucción del RAID}
+Vemos que están los dos discos con la orden \textit{lsblk}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{lslbk.png}  
+\label{figura1:}
+\caption{Discos del Raid}
+\end{figure}
+Primero debemos de marcar el disco como fallido con
+\textit{mdadm /dev/md0 -f /dev/sda1}
+Una vez marcado borramos el disco con
+\textit{mdadm /dev/md0 -r /dev/sda1}
+Miramos otra vez con la orden lsblk y vemos que nos sale un disco.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{lsblk.png}  
+\label{figura2:}
+\caption{Raid con un disco eliminado}
+\end{figure}
+Miramos el estado del raid con \textit{watch -n2 cat /proc/mdstat}
+
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{watch1.png}  
+\label{figura3:}
+\caption{Monotorizacion sin el disco}
+\end{figure}
+Ahora cogemos y añadimos el disco con la orden
+\textit{mdadm /dev/md0 -a /dev/sda1}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{reconstruccion.png}  
+\label{figura4:}
+\caption{Reconstrucción del raid}
+\end{figure}
+Una vez acabado el proceso de reconstrucción nos sale esto con el watch
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{watch2.png}  
+\label{figura5:}
+\caption{Raid reconstruido}
+\end{figure}
+
+\section{¿Qué archivo ha de modificar para programar una tarea? Escriba la linea necesaria para ejecutar una vez al día una copia del directorio \char126/codigo a \char126/seguridad/\$fecha donde \$fecha es la fecha actual (puede usar el comando date).}
+El archivo que hay que modificar es /etc/crontab
+La linea ha escribir es:\footnote{\url{http://blog.desdelinux.net/cron-crontab-explicados/}}
+\begin{verbatim}
+0 0 * * * root cp ~/codigo ~/seguridad/$(date +%d%m%y)
+\end{verbatim}
+Estos campos son los siguientes:
+\begin{itemize}
+\item Corresponde al minuto en el que se va a ejecutar
+\item Hora en formato 24 horas en la que se va a ejecutar
+\item Día del mes en el que se va a ejecutar, en nuestro caso como queremos que se ejecute cada dia pues ponemos un asterisco.
+\item Corresponde al mes
+\item Día de la semana que se quiere ejecutar, puede ser valores del 0 al 7, donde 0 y 7 son domingo, o poner lsa 3 primeras letras del dia en ingles: mon, tue, etc.
+\end{itemize}
+\section{Pruebe a ejecutar el comando, conectar un dispositivo USB y vuelva a ejecutar el comando. Copie y pegue la salida del comando. (considere usar dmsg | tail). Comente que observa en la información mostrada.}
+
+He utilizado un junto con la orden dmsg la orden grep. Entonces con dmsg | grep -i usb he filtrado por usb y se puede ver que ha reconocido el pen drive y el ratón que tengo conectado
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{dmsg.png}  
+\label{figura6:}
+\caption{Salida de la orden dmsg}
+\end{figure}
+Se puede apreciar cuando se desconecta, en la linea que pone usb-storage 1-1:1.0: USB Mass Storage device detected y se puede ver cuando se desconecta con USB disconnect, device number 7.
+\section{Ejecute el monitor de "System Performance" y muestre el resultado. Incluya capturas de pantalla comentando la información que aparece}
+Al ejecutar el monitor y esperar 60 segundos el informe que nos sale es inmenso. Yo comentare algunas características de entre todas las estadísticas mostradas
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{resumen1.png}  
+\label{figura7:}
+\caption{Informe System Performance 1}
+\end{figure}
+
+Como se puede ver aquí nos muestra el nombre del equipo y la fecha en la que se ha realizado la monitorización, en esta primera parte nos muestra un resumen de todo el informe:
+En procesador como se puede ver se ha utilizado poco , en disco se ha producido 5 accesos y en memoria se puede ver que esta usada el 25 por ciento y el tamaño de la memoria es 2048 MB.
+En rendimiento se puede ver que el uso de la CPU ha sido un 6 \% y nos dice que la carga ha sido baja. por otro lado la tarjeta de red ha estado inactiva, el disco también, como hemos dicho antes solo ha habido 5 accesos, y la memoria su uso es algo mas alto que los otro componentes ya que el 25 por ciento esta en uso.
+
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{resumen4.png}  
+\label{figura8:}
+\caption{Informe System Performance 2}
+\end{figure}
+En esta imagen se puede ver los procesos que había activos en el sistema durante el tiempo que ha durado la monotorizacion, con sus id's el espacio de trabajo y mas datos asociados al proceso.
+Con respecto a la memoria también se puede ver datos mas en detalle como los Bytes de cache, los bytes disponibles.
+Como se puede ver durante los 60 segundos que ha durado la monotorizacion el equipo ha estado parado y no ha trabajado. También hay que decir que la cantidad de datos ofrecidos por este informe es grandisima, solo he comentado estos pero podría haber comentados muchos mas.
+\section{Cree un recopilador de datos definido por el usuario(modo avanzado) que incluya tanto el contador de rendimiento como los datos de seguimiento \\Todos los referentes al procesador, al proceso y al servicio web.\\    Intervalo de muestra 15 segundos.\\Almacene el resultado en el directorio Escritorio/logs \\Incluya las capturas de pantalla de cada paso}
+En la ventana de la izquierda pinchamos lo siguiente
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{monitor1.png}  
+\label{figura9:}
+\caption{Creacion del monitor}
+\end{figure}
+Elegimos configuracion avanzada y le ponemos nombre
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{monitor2.png}  
+\label{figura10:}
+\caption{Configuracion avanzada}
+\end{figure}
+Seleccionamos Contador de rendimiento y datos de seguimiento de eventos
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{monitor3.png}
+\label{figura11:}
+\caption{Seleccion de registro de datos}
+\end{figure}
+Ahora elegimos que monitorice el procesador, el proceso y el servicio web.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{monitor4.png}  
+\label{figura12:}
+\caption{Eleccion de lo que queremos monitorizar}
+\end{figure}
+Ponemos el tiempo de muestreo a 15 segundos
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{monitor5.png}  
+\label{figura13:}
+\caption{Seleccion de tiempo de muestreo}
+\end{figure}
+Seleccionamos la ruta donde deseamos guardar los datos
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{monitor6.png}  
+\label{figura14:}
+\caption{Ruta donde guardar los archivos}
+\end{figure}
+\section{Instale alguno de los monitores comentados arriba en su maquina y pruebe a ejecutarlos (tenga en cuenta que si lo hace en la maquina virtual los resultados pueden no ser realistas). Alternativamente, busque otros monitores para hardware comerciales o de cogido abierto para Windows y Linux}
+Voy a probar un monitor linux ya que el sistema operativo en el que trabajo es ubuntu, voy a probar lm-sensors.
+Para instalarlo hay que escribir sudo apt-get install lm-sensors.
+\\Usamos la orden sensors-detect para que pueda detectar los chips a analizar, nos realizara preguntas y le damos a yes a los que queramos analizar.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{lmsensors.png}  
+\label{figura15:}
+\caption{Añadiendo chips a analizar con lmsensors}
+\end{figure}
+
+Ahora al final nos preguntara "Do you want to add these lines to /etc/modules automatically? (yes/NO), le damos a yes para que añada los módulos a analizar.
+\\Yo solo tengo añadido coretemp, que pide la temperatura de los procesadores.
+Al ejecutar la orden sensors vemos lo que nos sale:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{lmsensors1.png}  
+\label{figura16:}
+\caption{Ejecutando lmsensors}
+\end{figure}
+Otros monitores que podemos encontrar esta HWMonitor. \footnote{\url{http://www.cpuid.com/softwares/hwmonitor.html}}
+Este monitor permite medir la temperatura, voltaje, el consumo y la utilización de la CPU. Temperatura del disco duro, y voltaje, temperatura y utilización de la GPU.
+También existe otro llamado Speedfan en el que podemos ver voltajes y temperaturas de los componentes de nuestro equipo así como la frecuencia de los ventiladores y el uso de la CPU. \footnote{\url{http://www.almico.com/speedfan.php}}
+\section{Visite la web del proyecto y acceda a la demo que proporcionan donde se muestra como monitorizan un servidor. Monitorice varios parámetros y haga capturas de pantalla de lo que esta mostrando comentando que observa.}
+
+Cuando accedemos a la demo la cantidad de estadísticas y gráficas en muy grande. Comentare las que me han parecido mas relevantes
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{munin1.png}  
+\label{figura17:}
+\caption{Interfaces de red}
+\end{figure}
+Primero comentamos la estadísticas de interfaz de red tanto la eth0 y la lo. como vemos se nos muestra tanto los kbytes de subida como los de bajada.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{munin2.png}  
+\label{figura18:}
+\caption{Tanto por ciento de uso de la CPU}
+\end{figure}
+En esta gráfica se nos muestra el tanto por ciento de uso de la CPU, como vemos tiene 4 procesadores, durante la semana los cuatro procesadores se han usado mas o menos lo mismo.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{munin3.png}  
+\label{figura19:}
+\caption{Acesos y procesos de apache}
+\end{figure}
+En esta imagen se puede ver en las dos primeras gráficas el trafico de datos del puerto 80, o sea apache, y las dos gráficas de abajo se puede ver los procesos ejecutados en apache.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{munin4.png}  
+\label{figura20:}
+\caption{Estadísticas del disco}
+\end{figure}
+Aquí podemos ver en las dos gráficas de arriba las entradas y salidas en disco, en positivo se muestran las escrituras y en negativo las lecturas.
+En las gráficas de abajo se muestra la latencia de disco, esto es el tiempo de acceso a disco, se puede apreciar que durante el fin de semana el tiempo de acceso a disco es mucho menor que en los dias laborables de la semana.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{munin5.png}  
+\label{figura21:}
+\caption{Procesos}
+\end{figure}
+En estas gráficas se puede ver el numero de procesos del sistema con sus estados, por ejemplo el numero de procesos durmiendo, parados, zombie, corriendo, ininterrumpidos, etc.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{munin6.png}  
+\label{figura22:}
+\caption{Carga media del sistema}
+\end{figure}
+En estas gráficas nos muestra la carga media del sistema, de un minuto, 5 minutos y 15 minutos. En definitiva nos muestra la carga media del sistema de forma parecida a como lo hace la orden uptime de linux.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{munin7.png}  
+\label{figura23:}
+\caption{Uso de la memoria}
+\end{figure}
+Aquí vemos las gráficas de uso de la memoria expresadas en GB, podemos apreciar que durante el fin de semana la memoria cache apenas se ha utilizado en comparación con los días laborables de la semana y que ha habido mucha mas memoria sin usar el fin de semana que durante los días laborables.\footnote{\url{http://demo.munin-monitoring.org/munin-monitoring.org/demo.munin-monitoring.org/index.html}}
+\section{Haga lo mismo que con Munin}
+
+En la remo de ganglia puedes elegir varias opciones a la hora de medir las estadísticas, yo he elegido Analytics cluster eqiad y el nodo analytics1001.eqiad.wmnet
+
+Las primeras gráficas vemos que muestra una panorámica del host mostrando la carga, los bytes de bajada y de subida de la red, la memoria, y el tanto por ciento de uso de la cpu.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{ganglia1.png}  
+\label{figura23:}
+\caption{Panoramica del host}
+\end{figure}
+Mas abajo ofrece la posibilidad de visualizar estadísticas del nodo, por ejemplo las medidas de cpu.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{ganglia2.png}  
+\label{figura23:}
+\caption{Medidas de cpu}
+\end{figure}
+Se puede ver el tanto por ciento de uso de la cpu desglosado en las distintas categorías, ociosa, usuario, etc.
+También se puede ver las estadísticas de disco.
+Desglosada en espacio de disco disponible, total de espacio de disco y el tanto por ciento de uso de disco.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{ganglia3.png}  
+\label{figura23:}
+\caption{Estadisticas de disco}
+\end{figure}
+También se ve las gráficas de la carga media del sistema, tanto de 1 minuto, de 5 minutos como de 15 minutos.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{ganglia5.png}  
+\label{figura23:}
+\caption{Carga media del sistema}
+\end{figure}
+También se puede visualizar estadísticas de red y de procesos, de las estadísticas de red podemos ver los bytes enviados y recibidos y los paquetes enviados y recibidos. En cuanto a los procesos se puede ver los procesos totales del sistema y los procesos que están corriendo.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{ganglia6.png}  
+\label{figura23:}
+\caption{Estadisticas de red y de procesos}
+\end{figure}
+Por ultimo también nos muestran las medidas de memoria.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{ganglia7.png}  
+\label{figura23:}
+\caption{Estadisticas de la memoria}
+\end{figure}
+Como se puede ver vienen desglosadas en memoria de buffers, memoria libre, memoria cache, memoria compartida y memoria de swap.\footnote{\url{http://ganglia.wikimedia.org/latest/?r=2hr&cs=&ce=&c=Analytics+cluster+eqiad&h=analytics1001.eqiad.wmnet&tab=m&vn=&hide-hf=false&m=network_report&sh=1&z=small&hc=0&host_regex=&max_graphs=10&s=by+name}}
+\section{Instale el monitor y muestre y comente algunas capturas de pantalla}
+Para instalarlo ponemos: \textit{yum --enablerepo=epel -y install awstats}, reiniciamos el servicio httpd y generamos el archivo de reportes con \textit{/usr/share/awstats/wwwroot/cgi-bin/awstats.pl -config=localhost.localdomain -create} luego hacemos lo mismo pero con update en vez de create.
+ahora accedemos a traves del navegador escribiendo \textit{localhost/awstats/awstats.pl?config=localhost.localdomain}
+Nos sale esta pantalla
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{awstat.png}  
+\label{figura23:}
+\caption{Pagina inicial de Awstats}
+\end{figure}
+Como se puede ver nos aparece un resumen y histórico mensual, como lo acabo de instalar pues no aparece muchos datos y hay poco que comentar.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{awstat1.png}  
+\label{figura23:}
+\caption{Histórico de días de la semana y de horas}
+\end{figure}
+En esta imagen nos aparece un histórico de los días de la semana y de las horas.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{awstat2.png}  
+\label{figura23:}
+\caption{Otros datos de awstat}
+\end{figure}
+Aquí es muestran algunos datos interesantes. Como las paginas y urls mas consultadas, sistemas operativos y navegadores usados, búsqueda por frases y por palabras y paginas no encontradas.
+\section{Escriba un breve resumen sobre alguno de los artículos donde se muestra el uso de strace o busque otro y comentalo}
+
+En el articulo \footnote{\url{http://chadfowler.com/blog/2014/01/26/the-magic-of-strace/}} el autor nos explica una anécdota de su carrera profesional en la que dice que strace es una herramienta fundamental y sin duda alguna lo es, por la cantidad de cosas que nos llega a mostrar, básicamente strace es una orden de la linea de comandos que nos muestra los procesos ejecutados por un programa y sus hijos. Esto nos permite desmenuzar el programa y analizar lo que hace al detalle. En el articulo el autor nos muestra un ejemplo utilizando el siguiente código:
+\begin{verbatim}
+#include <stdio.h>
+void main() {
+  printf("hi\n");
+}
+\end{verbatim}
+Ahora ejecuta el programa con strace para ello escribe en la linea de comandos \textit{strace -s 2000 -f ./programa}
+, el -s indica a strace el tamaño de la cadena maxima que tiene que pintar. y el -f muestra los procesos hijos que crea el programa a ejecutar.
+El autor muestra la salida de strace y se puede ver muchas llamadas al sistema como el execve() que indica la ejecución del programa. La salida concluye con un write() que imprime el hola y un exit() para finalizar el programa.
+Como se puede ver esta orden es muy potente ya que muestra todo lo que pasa dentro del SO cuando se ejecuta un programa. Personalmente esta orden yo la conocía, la use con un pequeño programa en C que servía como calculadora, el cual tenia que introducir una contraseña, el problema estaba que no me acordaba de la contraseña, además, el código fuente no lo encontraba y en el tenia escrita la contraseña para compararla con la que introducía el usuario. Busque por internet y encontré la orden strace y al ejecutar mi programa se veía mi contraseña verdadera siendo comparada con la que yo introducía.
+Volviendo al articulo, el autor concluye que strace es una herramienta muy potente y anima al lector a investigar mas sobre esta orden, sin duda alguna, y en mi opinión, estoy totalmente de acuerdo con el autor ya que esta herramienta ofrece un muchas opciones y te hace "la vida" un poco mas fácil, yo creo que todo programador debería de conocer esta orden por su gran utilidad.
+\section{Desarrolle una pagina en C o en C++ y analice su comportamiento usando valdgrind.}
+\begin{verbatim}
+#include <stdio.h>
+int main(void) {
+  printf("Content-Type: text/plain;charset=us-ascii\n\n");
+  printf("Hello world\n\n");
+  return 0;
+}
+\end{verbatim}
+valgrind ofrece muchos tipos de herramientas, entre las que ofrece esta memcheck: detecta errores en memoria dinámica, cachegrind: permite mejorar la rapidez de ejecucion del codigo, callgrind: da informacion sobre las llamadas a metodos producidas por el codigo en ejecucion, massif: ayuda a reducir la cantidad de memoria usada por el programa.\footnote{\url{http://valgrind.org/info/tools.html}}
+Si se pone la orden valgrind sin ninguna herramienta especifica por defecto utilizara la de memcheck. Ese es un ejemplo de su salida en nuestro programa.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{valgrind.png}  
+\label{figura24:}
+\caption{Ejecucion de valgrind}
+\end{figure}
+
+\section{Escriba un script en python y analice su comportamiento usando el profiler presentado}
+\begin{verbatim}
+lista=list(range(100000000))
+
+for i in lista:
+	i*=2147483647
+for i in lista:
+	i%=13395
+
+lista.sort(reverse=True)
+\end{verbatim}
+Ejecutamos el script con el profiler.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{python.png}  
+\label{figura24:}
+\caption{Ejecucion del profiler}
+\end{figure}
+CProfile se puede llamar dentro del codigo y hacer el profiling de una funcion o de un trozo de un codigo tan solo con un import. Pero yo la he llamado para ejecutar el script entero. Los datos que nos ofrecen son el ncalls: para el numero de llamadas. tottime: para el total de tiempo gastado en la funcion, esto solo es para el uso en subrutinas. percall: cociente de tottime dividido entre ncalls. cumtime: tiempo acumulativo gastando en la funcion y sus subrutinas. percall: es el cociente de cumtime dividido por las llamadas sus llamadas. filename:lineno(function): provee los datos respectivos a cada funcion.\footnote{\url{https://docs.python.org/2/library/profile.html
+}}
+\section{Acceda a la consola de mysql y muestre el resultado de mostrar el profile de una consulta}
+Primero creamos la tabla e insertamos los datos:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{sql11.png}  
+\label{figura24:}
+\caption{Creacion de la tabla}
+\end{figure}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{sql12.png}  
+\label{figura24:}
+\caption{Insercion de datos 1}
+\end{figure}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{sql13.png}  
+\label{figura24:}
+\caption{Insercion de datos 2}
+\end{figure}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{sql14.png}  
+\label{figura24:}
+\caption{Insercion de datos 3}
+\end{figure}
+Para activar el profiler, debemos de poner en la linea de comandos \textit{mysql set profiling=1;}
+Ahora todas las consultas que hagamos seran medidas.
+
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{sql.png}  
+\label{figura24:}
+\caption{Activacion del profilin y consulta sql}
+\end{figure}
+
+Ahora podemos ver el tiempo de cada consulta que hagamos con \textit{show profiles}. 
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{sql2.png}  
+\label{figura24:}
+\caption{Tiempo de la consulta}
+\end{figure}
+si queremos ver una en concreto ponemos show profile for query y el numero de la consulta, como nosotros hemos hecho solo una ponemos el numero 1.\footnote{\url{http://rooteando.com/mysql-profiler-conoce-el-rendimiento-de-tus-consultas/}}
+
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{sql1.png}  
+\label{figura24:}
+\caption{Visualizacion de los tiempos medidos de la consulta}
+\end{figure}
+
+
+\section{Al igual que ha realizado el profiling con MySQL, realice lo mismo con MongoDB y compare los resultados (use la misma informacion y la misma consulta)}
+
+Primero creamos las tablas iguales que en sql, con tres filas y tres campos.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{mongo1.png}  
+\label{figura24:}
+\caption{Creacion de tablas}
+\end{figure}
+Luego importamos el archivo json.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{mongo2.png}  
+\label{figura24:}
+\caption{Importacion del archivo json}
+\end{figure}
+Debemos de activar el profiler. Por defecto mongodb hace un profiling de las consultas que tardan mucho, pero podemos modificarlo poniendo el modo profiling nivel 2 para que haga profiling de todas las consultas. Para poner nivel dos ponemos \textit{db.setProfilingLevel(2)} Ahora hacemos la consulta igual que la del ejericico anterior pero ahora con mongo.\footnote{\url{https://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/}}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{mongo3.png}  
+\label{figura24:}
+\caption{Consulta}
+\end{figure}
+Una vez hecha la consulta el resultado del profiling lo guarda en la collecion system.profile, debemos de hacer una consulta en esta collecion para que nos diga el resultado de nuestra anterior consulta. Cambiamos a la base de datos system.profile y hacemos la consulta buscando nuestra consulta anterior.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.4]{mongo4.png}  
+\label{figura24:}
+\caption{Profiling MongoDB}
+\end{figure}
+Buscamos por operacion query, ns personas.gente para que nos salga la nuestra.
+
+
+\end{document}

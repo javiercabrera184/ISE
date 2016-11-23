@@ -1,0 +1,533 @@
+\input{preambulo.tex}
+
+%----------------------------------------------------------------------------------------
+%	TÍTULO Y DATOS DEL ALUMNO
+%----------------------------------------------------------------------------------------
+
+\title{	
+\normalfont \normalsize 
+\textsc{{\bf Ingeniería de Servidores (2014-2015)} \\ Grado en Ingeniería Informática \\ Universidad de Granada} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Memoria Práctica 2 \\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal 
+}
+
+\author{Antonio Javier Cabrera Gutiérrez } % Nombre y apellidos
+
+\date{\normalsize\today} % Incluye la fecha actual
+
+%----------------------------------------------------------------------------------------
+% DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Muestra el Título
+
+\newpage %inserta un salto de página
+
+\tableofcontents % para generar el índice de contenidos
+
+\listoffigures
+
+
+
+\newpage
+
+\section{Liste los argumentos de yum necesarios para instalar, buscar y eliminar paquetes}
+\begin{itemize}
+\item Instalar: yum install paquete
+\item Buscar: yum search paquete
+\item Eliminar: yum remove paquete
+\footnote{\url{http://www.linuxtotal.com.mx/index.php?cont=info_admon_020}}
+\end{itemize}
+\section{¿Qué ha de hacer para que yum pueda tener acceso a Internet?¿Cómo añadimos un nuevo repositorio?}
+
+Se debe de acceder al archivo de configuración de yum en \textit{/etc/yum.conf} y en el parámetro de proxy debemos de poner el servidor como una URL incluyendo el puerto. 
+Además si se requiere un nombre de usuario y una contraseña para acceder al servidor se debe de incluir el parámetro proxy\_username para el nombre de usuario y el parámetro proxy\_password para la contraseña. \footnote{\url{https://docs.fedoraproject.org/es-ES/Fedora_Core/4/html/Software_Management_Guide/sn-yum-proxy-server.html}}
+\\Para agregar repositorios a yum se puede hacer de dos formas:
+\\La primera forma es accediendo al directorio \textit{/etc/yum.repos.d} donde están localizados los ficheros de repositorio de RedHat. Cada uno de estos ficheros maneja los repositorios.
+\\Para agregar un repositorio basta con crear un fichero de ese tipo con la estructura deseada, o si ya esta creado y no es esta activado debemos de activarlo cambiando la variable enabled a 1.
+\\La segunda forma es a traves de yum-config-manager.
+En la linea de comando se debe de poner \textit{yum-config-manager --add-repo= url del repositorio}. Una vez agregado debemos de activarlo referenciandolo por su nombre a traves de esta orden: \textit{yum-config-manager --enable "nombre del repositorio"}.
+\footnote{\url{http://www.elmundoenbits.com/2011/11/como-agregar-un-repositorio-redhat.html}}
+\section{Indique el comando para buscar un paquete en un repositorio y el correspondiente para instalarlo}
+
+Para buscar un paquete se hace a traves de \textit{sudo apt-cache search nombre del paquete}.
+\\Para instalarlo se hace a traves de \textit{sudo apt-get install nombre del paquete}.
+\footnote{\url{http://www.ubuntu-guia.com/2011/01/comando-apt-get-en-ubuntu.html}}
+
+\newpage
+\section{Indique que ha modificado para que apt pueda acceder a los servidores de paquetes a traves del proxy. ¿Cómo añadimos un nuevo repositorio?}
+Debemos de entrar en \textit{/etc/apt/apt.conf} o en \textit{/etc/apt.conf.d/}.
+\\Si existe el primer directorio debemos de abrirlo y al final agregar lo siguiente:
+\textit{\\Acquire\{
+\\http\{
+\\Proxy "url con su puerto al final";
+\\\}
+\\\}}
+\\Si no existe el primer directorio y si el segundo entonces debemos de crear un archivo individual para guardar la configuración del proxy y dentro ponemos lo mismo que en el anterior. 
+\\Si el proxy tuviese autenticación por medio de usuario y contraseña se debería poner en la dirección url por ejemplo asi:
+\\ \textit{"http://usuarioweb:contraseña@192.168.1.254:3128";}
+
+\footnote{\url{http://tuxjm.net/2009/07/23/como-configurar-y-usar-apt-atras-de-un-proxy-http-en-ubuntu-o-debian}}
+\\Para añadir un repositorio podemos proceder de dos formas:
+\\La primera es añadirlo manualmente, para eso editamos el archivo \textit{sources.list}, la segunda es por medio de apt, escribiendo \textit{sudo add-apt-repository ppa: nombre del repositorio}. \footnote{\url{http://www.guia-ubuntu.com/index.php/Añadir_repositorios_externos}}
+\section{¿Que gestores utilizan OpenSuse?}
+Entre los gestores de paquetes de OpenSuse tenemos Zypper, YaST y Smart.
+\\Zypper es un gestor de paquetes de linea de comandos \footnote{\url{https://es.opensuse.org/Zypper}}
+\\YaST es un gestor de paquetes pero con interfaz grafica.\footnote{\url{https://es.opensuse.org/Archive:YaST_Gestión_de_software}}
+\\Por ultimo Smart es un programa reciente cuyo objetivo es crear algoritmo inteligentes y portables para resolver de manera adecuada el problema de la administración de paquetes.\footnote{\url{https://es.opensuse.org/Archive:Smart}}
+
+\section{¿Que diferencia hay entre Telnet y SSH?}
+
+A simple vista telnet (\textbf{Tel}ecomunication \textbf{Net}working) y SSH (\textbf{S}ecure\textbf{ Sh}ell) son casi lo mismo.
+\\Por lo general Telnet es el puerto 23 y SSH el puerto 22 y para conectarnos necesitamos un nombre y una contraseña y que la maquina a la cual accedemos acepten estos protocolos.\footnote{\url{http://blog.evidaliahost.com/2014/11/21/cual-es-la-diferencia-entre-telnet-y-ssh}}
+Ahora bien, la diferencia fundamental entre ellos es la seguridad, con Telnet todo lo que hagamos remotamente viajara por la red en forma de texto plano y cualquier tercero que pueda estar espiándonos la red puede saber lo que estamos haciendo. El problema es que cuando se diseño Telnet fue ideado para trabajar en redes privadas y los temas de seguridad no fueron tomados con seria importancia.
+\\En cambio SSH introduce cifrado en sus paquetes cosa que lo hace mas seguro en las redes abiertas, además ssh tiene que utilizar una clave publica para su autenticación, esto por ejemplo telnet no lo hace.
+\\Por ultimo cabe mencionar que SSH ha resuelto el problema del ancho de banda, que era un problema mayor cuando las velocidades de Internet eran muy lentas, esto en la actualidad ya no es muy relevante.\footnote{\url{http://www.sivz.com/Diferencia-entre-Telnet-y-SSH-q90231}}
+
+\section{¿Para que sirve la opción -X? Ejecute remotamente, es decir, desde la maquina anfitriona o desde la maquina virtual, el comando gedit en una sesión abierta con ssh. ¿Qué ocurre?}
+Si ponemos ssh -X, hacemos que ssh active el reenvío de X11. Esto permite ejecutar una aplicación X remota y mostrarlo a nivel local. Para el reenvío de X11 tanto el cliente como el servidor deben estar configurados correctamente. \footnote{\url{http://www.sied.com.ar/2014/02/reenvio-por-x11-a-traves-de-ssh-ejecutar-la-aplicacion-grafica-remota-y-visualizar-localmente.html}}
+Como vemos, al ejecutar la orden gedit, una vez conectados con ssh previamente, nos muestra un gedit con su interfaz gráfica.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.25]{X.png}  
+\label{figura1:}
+\caption{ssh -X con gedit}
+\end{figure}
+
+\newpage
+
+\section{Muestre la secuencia de comandos y las modificaciones a los archivos correspondientes para permitir acceder a la consola remota sin introducir la contraseña}
+En el primer paso creamos la clave, nos pide el nombre del archivo y una frase de seguridad.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{ssh1.png}  
+\label{figura2:}
+\caption{1º Paso}
+\end{figure}
+Ahora las claves generadas las cambiamos al directorio .ssh, con ssh-copy-id copiamos la clave publica al servidor, probamos conectarnos y solo nos pide la frase de seguridad y se conecta.
+
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{ssh2.png}  
+\label{figura3:}
+\caption{2º Paso}
+\end{figure}
+Para ver las claves autorizadas que acepta el servidor miramos en authoriced-keys y nos sale la nuestra.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{ssh3.png}  
+\label{figura4:}
+\caption{Comprobación}
+\end{figure}
+Por el ultimo el tema de los permisos es muy importante. Para que funcione, los permisos del HOME deben de ser 700 o 755, no funciona con 770 o similar. Es decir, solo el propietario del HOME puede hacer la conexión.
+También el HOME/.ssh debe tener permisos 700. 
+Y, por ultimo el fichero authorized\_keys no puede tener permisos de escritura para grupo no para otros. En mi caso lo tengo en -rw-------.\footnote{\url{http://blog-alexis.rhcloud.com/2011/06/26/ssh-copy-id-la-vida-un-poco-mas-facil/}}
+\section{¿Qué archivo es el que contiene la configuración de sshd?¿Qué parámetro hay que modificar para evitar que el usuario root acceda?Cambie el puerto por defecto y compruebe que puede acceder}
+El archivo se llama sshd\_config y se encuentra en /etc/ssh/
+\\El parámetro PermitRootLogin
+\\El puerto por defecto es el 22. cambiemoslo al 69.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{puerto.png}  
+\label{figura5:}
+\caption{Cambiamos el puerto}
+\end{figure}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{puerto1.png}  
+\label{figura6:}
+\caption{Comprobación}
+\end{figure}
+\section{Indique si es necesario reiniciar el servicio. ¿Cómo se reinicia un servicio en Ubuntu?¿y en CentOS? Muestre la secuencia de comandos para hacerlo.}
+Cuando cambiamos el puerto debemos de reiniciar el servicio para ello si utilizamos Ubuntu se hace de la siguiente forma: escribimos /etc/init.d/ssh restart o service sshd restart, en CentOS también lo podemos hacer con service sshd restart.\footnote{\url{https://wiki.centos.org/es/HowTos/Network/SecuringSSH}}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{reiniciar.png}  
+\label{figura7:}
+\caption{Reiniciar ssh}
+\end{figure}
+\section{Instale y pruebe terminator. Con screen, pruebe su funcionamiento dejando sesiones ssh abiertas en el servidor y recuperándolas posteriormente}
+Con screen podemos crear sesiones en la terminal y trabajar con ellas, entonces para crear una sesión ponemos screen -S y el nombre, para hacer algo en screen se hace a partir de CTRL+a, para crear una ventana usamos CTRL+a y soltamos y le damos a la c, si le damos a CTRL+a y " nos sale una lista de las ventanas abiertas.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{screenlista.png}  
+\label{figura8:}
+\caption{Lista de ventanas screen}
+\end{figure}
+Se puede ver que tenemos dos. Con CTRL+a y 0 se nos pone la ventana 0, y con CTRL+a y 1 se nos pone la ventana 1.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{screen0.png}  
+\label{figura9:}
+\caption{Screen 0}
+\end{figure}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{screen1.png}  
+\label{figura10:}
+\caption{Screen 1}
+\end{figure}
+Si queremos trabajar con las dos a la vez, usamos CTRL+a y SHIFT+S y nos aparece una pantalla en la que abajo tenemos que poner la ventana que queremos. Si arriba tenemos la 1, abajo ponemos la 0.
+Nos podemos ir moviendo por ellas a traves de CTRL+a y TAB.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{screenfinal.png}  
+\label{figura11:}
+\caption{Pantalla dividida con screen}
+\end{figure}
+Como se puede ver abajo tenemos una sesion haciendo ping y arriba otra usando ssh.\footnote{\url{https://phenobarbital.wordpress.com/2013/02/18/linux-usando-gnu-screen/}}
+\section{Instale el servicio y pruebe su funcionamiento}
+fail2ban es una herramienta para banear a usuarios que se intenten conectar de forma errónea, yo lo he instalado en ubuntu, para ello hay que escribir sudo apt-get install fail2ban. una vez instalado accedemos a su archivo de configuración en /etc/fail2ban/jail.conf y donde pone [ssh] en el apartado de maxretry he puesto 2, osea esto es el numero de intentos de poner bien la contraseña.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{failconfig.png}  
+\label{figura12:}
+\caption{Configuración de fail2ban}
+\end{figure}
+Ahora desde ubuntu server he accedido a mi portátil y he escrito dos veces mal la contraseña, a la segunda vez se queda como colgado, si pruebo a conectarme otra vez pasa lo mismo, se queda colgado, utilizando -v -v -v como en la imagen de abajo se puede ver se muestra el proceso de conexión que se queda pillado.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{pruebafail.png}  
+\label{figura13:}
+\caption{Conexión baneada de fail2ban}
+\end{figure} 
+Para ver que ocurre nos metemos en el .log de fail2ban, en /var/log/fail2ban.log y vemos que nuestra IP esta baneada
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{baneo.png}  
+\label{figura14:}
+\caption{IP baneada por fail2ban}
+\end{figure}
+En este caso el tiempo de baneo es de 600 segundos, en 600 segundos podre volver a conectarme, pero eso si, poniendo bien la contraseña.
+\section{Muestre los comandos que ha utilizado en Ubuntu Server y en CentOS}
+\subsection{CentOS}
+Primero instalamos Apache: yum install httpd, iniciamos con service httpd start, comprobamos que funciona abriendo nuestro navegador y poniendo localhost.
+\\Tarda lo suyo en instalarse.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{apache.png}  
+\label{figura15:}
+\caption{Instalar apache}
+\end{figure}
+Se puede ver que funciona:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{apache1.png}  
+\label{figura16:}
+\caption{Comprobación apache}
+\end{figure}
+A continuación instalamos mysql, en este caso al usar CentOS 7 hay que añadir el repositorio
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{repos.png}  
+\label{figura17:}
+\caption{Instalación repositorio mysql}
+\end{figure}
+Procedemos a habilitar el repositorio y a continuación instalamos:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{habilitar.png}  
+\label{figura18:}
+\caption{Habilitar el repositorio}
+\end{figure}
+Iniciamos el servicio y miramos su estado:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{estatus.png}  
+\label{figura19:}
+\caption{Iniciación del servicio y comprobación del estado}
+\end{figure}
+A continuación instalamos php:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{php.png}  
+\label{figura20:}
+\caption{Instalación php}
+\end{figure}
+Una vez instalado reiniciamos apache.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{reinicio.png}  
+\label{figura21:}
+\caption{Reinicio de apache}
+\end{figure}
+Ponemos lo siguiente para que cuando se reinicie la maquina se activen los servicios, utilizamos los siguientes comandos:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{rei.png}  
+\label{figura22:}
+\caption{Activación de los servicios después del reiniciar la maquina}
+\end{figure}
+
+Por ultimo para ver que todo funciona creamos un archivo php llamado phpinfo.php por ejemplo en /www/html y lo abrimos con firefox localhost/phpinfo.php
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{comprobarlamp.png}  
+\label{figura23:}
+\caption{Comprobación}
+\end{figure}
+\subsection{Ubuntu Server}
+Ahora procedemos a la instalación en ubuntu server
+Instalamos apache con \textit{sudo apt-get install apache2}.
+\\Procedemos a instalar php con \textit{sudo apt-get install php5 libapache2-mod-php5 php5-cli php5-mysql}.
+\\Por ultimo instalamos mysql \textit{sudo apt-get install mysql-server mysql-client libmysqlclient-dev}\footnote{\url{http://blog.desdelinux.net/como-instalar-lamp-en-ubuntu/}}
+\section{Enumere otros servidores web y las paginas de sus proyectos}
+\begin{itemize}
+\item Cherokee: \url{http://cherokee-project.com/}
+\item Lighttpd: \url{http://www.lighttpd.net/}
+\item Thttpd: \url{http://www.acme.com/software/thttpd/}
+\item jetty: \url{http://www.eclipse.org/jetty/}
+\end{itemize}
+\section{Compruebe que el servicio esta funcionando accediendo a la MV a traves de la anfitriona}
+Se puede ver que la conexión se ha hecho, ya que en sesiones actuales de FTP de Windows nos sale la nuestra, nos pide el usuario y la contraseña como se puede ver en la imagen.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{windows.png}  
+\label{figura24:}
+\caption{Comprobacion de la conexion FTP}
+\end{figure}
+\section{Realice la instalación de MongoDB en alguna de sus máquinas virtuales. Cree una colección de documentos y haga una consulta sobre ellos}
+He instalado MongoDB en CentOS, para su instalación hay que añadir el repositorio, para esto, hacemos \textit{sudo gedit /etc/yum.repos.d/mongodb.repo}
+y dentro copiamos lo siguiente
+\begin{verbatim}
+[mongodb]
+name=MongoDB Repository
+baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
+gpgcheck=0
+enabled=1
+\end{verbatim}
+Hacemos el update e instalamos mongo: \textit{sudo yum -y install mongodb-org mongodb-org-server}
+Iniciamos el sistema con \textit{systemctl start mongod}\footnote{\url{http://www.liquidweb.com/kb/how-to-install-mongodb-on-centos-7/}}
+Ahora debemos de importar un archivo y crear la base de datos. Yo me he descargado un json de Internet donde hay muchas personas con sus datos.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{personas.png}  
+\label{figura25:}
+\caption{Muestra del archivo de personas}
+\end{figure}
+Ahora para incorporarlo a la base datos escribimos los siguiente en la terminal
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{importar.png}  
+\label{figura26:}
+\caption{importar el archivo json}
+\end{figure}
+Con --host le decimos donde esta el archivo con --port el puerto, en este caso mongodb usa 27017, que es el de por defecto con -db creamos la base de datos que se llama test, con --collection creamos la colección que se llamara people y con --file ponemos la ruta del archivo.
+\\Iniciamos mongoDB y le indicamos que queremos usar la base de datos test
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{iniciarmongo.png}  
+\label{figura27:}
+\caption{Inciar MongoDB}
+\end{figure}
+Ahora procedemos a hacer una consulta por ejemplo esta:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{consulta.png}  
+\label{figura28:}
+\caption{Consulta en MongoDB}
+\end{figure}
+En esta consulta estamos buscando personas cuya edad sea 34 y sean activas, y filtramos por nombre, edad y si son activas.\footnote{\url{http://www.charlascylon.com/post/61794340001/tutorial-mongodb-operaciones-de-consulta}}
+
+\section{Realice la instalación de uno de estos dos web containers y pruebe su ejecución}
+Para instalarlo debemos de hacer \textit{sudo yum install tomcat}.
+Instalamos los paquetes de administrador con s\textit{udo yum install tomcat-webapps tomcat-admin-webapps}.
+Iniciamos tomcat con \textit{sudo systemctl start tomcat}
+y accedemos a traves de localhost:8080. \footnote{\url{https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-7-on-centos-7-via-yum}}
+Una vez dentro nos aparece esta pantalla
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{iniciotomcat.png}  
+\label{figura29:}
+\caption{Pagina inicial de apache tomcat}
+\end{figure}
+
+Podemos ir probando cosas. Yo he ido al apartado de ejemplos.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{ejemplos.png}  
+\label{figura30:}
+\caption{Pagina de ejemplos}
+\end{figure}
+Ahí le he dado al programa de Hola mundo que muestra hola mundo en la pantalla.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{holamundo.png}  
+\label{figura31:}
+\caption{Hola Mundo en apache tomcat}
+\end{figure}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{codigohola.png}  
+\label{figura32:}
+\caption{Código Hola Mundo}
+\end{figure}
+\section{ Muestre un ejemplo de uso del comando}
+Vamos a hacer un ejemplo.
+Creamos dos documentos, viejo.txt cuyo contenido es "hoy es lunes", y otro fichero donde su contenido es "hoy es martes".
+\\Ahora bien, usando la orden diff para crear un fichero con las diferencias que hay entre esos dos ficheros.
+Ahora creamos un fichero que sera el que parchearemos, en el escribimos, "hoy es lunes me gusta jugar al fútbol, etc" entonces al parchearlo encontrara la frase hoy es lunes y la cambiara por hoy es martes. \footnote{\url{http://redes-privadas-virtuales.blogspot.com.es/2010/01/creacion-y-aplicacion-de-parches-con.html}}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{patch.png}  
+\label{figura33:}
+\caption{Proceso de parcheado}
+\end{figure}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{patchr.png}  
+\label{figura34:}
+\caption{Resultado del parcheado}
+\end{figure}
+\section{Realice la instalación de esta aplicación y pruebe a modificar algún parámetro de algún servicio. Muestre las capturas de pantalla pertinentes así como el proceso de instalación}
+Para instalarlo empezamos abriendo el siguiente archivo: \textit{sudo gedit /etc/yum.repos.d/webmin.repo}.
+\\Una vez abierto escribimos lo siguiente:
+\begin{verbatim}
+[Webmin]
+name=Webmin Distribution Neutral
+#baseurl=http://download.webmin.com/download/yum
+mirrorlist=http://download.webmin.com/download/yum/mirrorlist
+enabled=1
+\end{verbatim}
+Seguidamente hacemos:
+\\\textit{rpm --import http://www.webmin.com/jcameron-key.asc
+}
+Actualizamos los repositorios con \textit{yum check-update}. Instalamos wedmin con \textit{sudo yum install webmin -y}. Por ultimo ponemos \textit{sudo chkconfig webmin on} y \textit{sudo service webmin start} para iniciar el servicio. Ahora abrimos el puerto, wedmin usa el 10000. \textit{sudo firewall-cmd --add-port=10000/tcp}\footnote{\url{http://lintut.com/how-to-install-webmin-on-centos-7/}}
+Se nos abre esta ventana.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{webmin.png}  
+\label{figura35:}
+\caption{Pantalla inicial de webmin}
+\end{figure}
+Ponemos ahora el usuario root y la contraseña y entramos a la pagina principal.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{webmin1.png}  
+\label{figura36:}
+\caption{Pagina principal}
+\end{figure}
+Nos metemos en la pantalla de configuración de webmin.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{webmin2.png}  
+\label{figura37:}
+\caption{Configuración de webmin}
+\end{figure}
+Entre otras cosas podemos modificar los puertos, en este caso he cambiado el puerto 10000 por el 6969
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{configuracion.png}  
+\label{figura38:}
+\caption{Configuración webmin}
+\end{figure}
+También hemos programado dos tareas con CRON
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{cron.png}  
+\label{figura39:}
+\caption{Iniciando tareas CRON}
+\end{figure}
+\section{Instale phpMyAdmin, indique como lo ha realizado y muestre algunas capturas de pantalla. Configure PHP para poder importar BDs mayores a 8MB (limite por defecto). Indique como ha realizado el proceso y muestre capturas de pantalla}
+Para instalarlo primero debemos añadir el repositorio con
+\textit{rpm -iUvh http://dl.fedoraproject.org/pub/\\epel/7/x86\_64/e/epel-release-7-5.noarch.rpm
+}. Actualizamos con \textit{sudo yum -y update} e instalamos phpmyadmin con s\textit{udo yum -y install phpmyadmin}.
+\\Por ultimo reiniciamos apache.
+Abrimos phpmyadmin poniendo en el navegador \textit{localhost/phpmyadmin}. Se nos debe de abrir esta pantalla.\footnote{\url{http://www.liquidweb.com/kb/how-to-install-and-configure-phpmyadmin-on-centos-7/}}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{phpmyadmin.png}  
+\label{figura40:}
+\caption{Inicio de PHPMyAdmin}
+\end{figure}
+Ahora cambiamos el limite por defecto de los 8M. Para ello debemos de acceder al fichero php.init, y la variable post\_max\_size cambiamos el valor.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{phpini.png}  
+\label{figura41:}
+\caption{Fichero ph.init}
+\end{figure}
+\section{Visite al menos una de las webs de los software mencionados y pruebe las demos que ofrecen realizando capturas de pantalla y comentando que esta realizando}
+He probado la demo de ispconfig, ellos te ofrecen una contraseña y un usuario para poder probarla.
+Una vez dentro nos sale esto:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{ispconfig.png}  
+\label{figura42:}
+\caption{Pagina principal de ispconfig}
+\end{figure}
+Tambien he añadido una IP
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{aniadirip.png}  
+\label{figura43:}
+\caption{Añadir IP}
+\end{figure}
+Y por ultimo también he configurado el monitor para que se ejecute cada 5 minutos.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{monitor.png}  
+\label{figura44:}
+\caption{Monitor ispconfig}
+\end{figure}
+
+\section{Ejecute los ejemplos de find, grep y escriba el script que haga uso de sed para cambiar la configuración de ssh y reiniciar el servicio.}
+
+\begin{verbatim}
+#!/bin/bash
+
+sed 's/2m/30s/' /etc/ssh/sshd_config > /etc/ssh/sshd_config2
+rm /etc/ssh/sshd_config
+mv /etc/ssh/ssh_config2 /etc/ssh/ssh_config
+service sshd restart
+\end{verbatim}
+\section{Muestre un ejemplo de uso para awk}
+Voy a hacer un ejemplo sencillo, aunque la orden awk tiene mucha potencia a la hora de usarla.
+El ejemplo es crear un archivo con una serie de palabra y aplicarle awk como se muestra en la captura.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{awk.png}  
+\label{figura45:}
+\caption{Ejemplo awk}
+\end{figure}
+En este ejemplo primero busca las palabras que son iguales a pedro y las siguientes las que tienen una p. El primer ejemplo seria parecido al grep.
+\section{Escriba el script para cambiar el acceso a ssh usando PHP o Python}
+\begin{verbatim}
+import sys
+import os
+import subprocess
+import shutil
+fa=open('/etc/ssh/sshd_config', 'r+')
+fb=open('/home/ajavier/Escritorio/sshd_config.txt','r+')
+
+for line in fa:
+	
+	fb.write(line.replace("2m","30s"))
+	
+
+shutil.copyfile("/home/ajavier/Escritorio/sshd_config.txt","/etc/ssh/sshd_config")
+os.remove('/home/ajavier/Escritorio/sshd_config.txt')	
+subprocess.call(['service','sshd','restart']) 
+
+\end{verbatim}
+\section{Abra una consola de PowerShell y pruebe para un programa en ejecución, realice capturas de pantalla y comente lo que muestra}
+Abrimos el bloc de notas y la powershell. Ejecutamos Get-Process para ver los procesos abiertos.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{sinparar.png}  
+\label{figura46:}
+\caption{Get-Process}
+\end{figure}
+Ahora ponemos Stop-Process -Name notepad y paramos el proceso y al volver a ejecutar Get-Process nos sale que ya no esta como es de esperar.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{parao.png}  
+\label{figura47:}
+\caption{Notepad sin ejecutar}
+\end{figure}
+
+
+\end{document}

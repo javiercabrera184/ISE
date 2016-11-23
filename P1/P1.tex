@@ -1,0 +1,350 @@
+\input{preambulo.tex}
+
+%----------------------------------------------------------------------------------------
+%	TÍTULO Y DATOS DEL ALUMNO
+%----------------------------------------------------------------------------------------
+
+\title{	
+\normalfont \normalsize 
+\textsc{{\bf Ingeniería de Servidores (2014-2015)} \\ Grado en Ingeniería Informática \\ Universidad de Granada} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Memoria Práctica 1 \\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal 
+}
+
+\author{Antonio Javier Cabrera Gutiérrez } % Nombre y apellidos
+
+\date{\normalsize\today} % Incluye la fecha actual
+
+%----------------------------------------------------------------------------------------
+% DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Muestra el Título
+
+\newpage %inserta un salto de página
+
+\tableofcontents % para generar el índice de contenidos
+
+\listoffigures
+
+\listoftables
+
+\newpage
+
+\section{¿Qué modos y/o tipos de “virtualización” existen?}
+Existen muchos tipos de virtualización ya que  es una tecnología que combina o divide
+recursos de computación para presentar uno o varios
+entornos de operación utilizando metodologías como
+particionamiento o agregación ya sea hardware o software,
+simulación de máquinas completa o parcial, emulación,
+tiempo compartido, y otras. Entre las mas destacadas estan:\footnote{\url{https://es.wikipedia.org/wiki/Virtualización}} 
+\begin{itemize}
+\item \textbf{Virtualización asistida por hardware:} 
+\\Son extensiones introducidas en la arquitectura x86 para facilitar las tareas de virtualización al software ejecutandose al sistema.
+\item \textbf{Virtualización de almacenamiento:}
+\\Abstrae el almacenamiento lógico del almacenamiento físico. Los recursos de almacenamiento físicos son agregados al almacén de almacenamiento\textit{"storage pool"}, del cual es creado el almacenamiento lógico.
+\item \textbf{Particionamiento:}
+\\Es la división de un solo recurso, como el espacio de disco o el ancho de banda, en un numero mas pequeño y con recursos del mismo tipo que son mas fáciles de utilizar.
+\item \textbf{Maquina Virtual:}
+\\ Sistema de virtualización denominado \textit{"virtualización de servidores"}, que dependiendo de la función que esta deba desempeñar en la organización, todas ellas dependen del hardware y dispositivos físicos, pero casi siempre trabajan como modelos totalmente independientes de este. Cada una de ellas con sus propias CPUs virtuales, discos, etc.
+\item \textbf{Hypervisor de almacenamiento:}
+\\Es un pack de gestión centralizada utilizado para mejorar el valor combinado de los sistemas de disco de almacenamiento múltiples complementando sus capacidades individuales con el aprovisionamiento extendido, la replica y la aceleración del rendimiento del servicio. Su completo conjunto de funciones de control y monitorización del almacenamiento, operan como una capa virtual transparente entre los polos de disco consolidados para mejorar su disponibilidad, velocidad y utilización.
+
+\end{itemize}
+\newpage
+\section{Muestre los precios y características de varios proveedores de VPS (Virtual Private Server) y compare con el precio de servidores dedicados (administrados y no administrados). Comente diferencias.}
+Proveedores de VPS:\footnote{\url{http://www.mejores-hosting.org/mejor-servidor-vps}}
+\begin{itemize}
+\item BanaHosting
+	\begin{itemize}
+	\item Precio: Desde 19.95 \$
+	\item Núcleos: 2.
+	\item Memoria: 1GB.
+	\item Disco: 20GB SSD.
+	\item Tráfico: 2 TB.
+	\end{itemize}
+\item Inmotion
+	\begin{itemize}
+	\item Precio: Desde 44.99\$
+	\item Núcleos: 1.
+	\item Memoria: 4GB.
+	\item Disco: 60 GB RAID6 SSD.
+	\item Trafico: 2TB.
+	\end{itemize}
+\item 1and1
+	\begin{itemize}
+	\item Precio: 19.99\$
+	\item Núcleos: 2.
+	\item Memorias: 2GB.
+	\item Disco: 150GB.
+	\item Tráfico: 1TB.
+	\end{itemize}
+\end{itemize}
+Servidores dedicados: \footnote{\url{http://hostarting.es/hostings/servidores-dedicados/}}
+\begin{itemize}
+\item 1and1
+	\begin{itemize}
+	\item Precio: 169.99 \euro
+	\item Núcleos: 4
+	\item Memoria: 32GB
+	\item Disco: 2TB
+	\item Tráfico: ilimitado
+	\end{itemize}
+\item Hostinet
+	\begin{itemize}
+	\item Precio: 224.14 \euro
+	\item Núcleos: 2
+	\item Memoria: 2GB
+	\item Disco: 500 GB
+	\item Tráfico: 1.95 TB
+	\end{itemize}
+
+\item Cyberneticos CPD
+	\begin{itemize}
+	\item Precio: 229 \euro
+	\item Núcleos: 2
+	\item Memoria: 8 GB
+	\item Disco: 2 GB \begin{tiny}
+	(creo que es error de la pagina pero eso ponia)
+	\end{tiny}
+	\item Tráfico: 1.76 TB
+	\end{itemize}
+\end{itemize}
+Como se puede ver las diferencias fundamentales entre un VPS y un servidor dedicado son fundamentalmente las prestaciones y eso conlleva un aumento de precio en la adquisición de un servidor 
+\section{¿Qué otros software de virtualización existen ademas de VMWare y Virtual Box?}
+CAMEYO, SANDBOXIE, DOSBOX,\footnote{\url{http://computerhoy.com/listas/software/5-mejores-programas-virtualizacion-3943}} QEMU, VIRTUAL PC, PARALLELS\footnote{\url{http://tecnologia21.com/25912/5-programas-virtualizacion}}
+\newpage
+\section{Enumere algunas de las innovaciones en Windows 2012 R2 respecto a 2008R2.}
+Las innovaciones respecto al sistema son las siguientes: \footnote{\url{http://www.microsoft.com/es-es/server-cloud/products/windows-server-2012-r2/comparison.aspx}}
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+{\bf Sistema} & {\bf Windows Server 2008 R2} & {\bf Windows Server 2012 R2} \\
+\hline
+Procesadores logicos & 64 & 320 \\
+\hline
+Memoria fisica & 1 TB & 4 TB \\
+\hline
+Procesadores virtuales por host & 512 & 2048 \\
+\hline
+Procesadores virtuales por VM & 64 GB & 1 TB \\
+\hline
+Capacidad de disco virtual & 2 TB & 64 TB \\
+\hline
+Maquinas virtuales activas & 384 & 1024 	\\
+\hline
+Nodos & 16 & 64 \\
+\hline
+Maquinas virtuales & 1000 & 8000\\
+\hline
+\end{tabular}  
+\caption{Innovaciones respecto al sistema} \label{tab:}
+\end{table}
+
+Las principales innovaciones respecto a las carácteristicas que ofrece windows server 2012 R2 respecto a windows server 2008 R2 son:
+\begin{itemize}
+\item Control de acceso dinámico
+\item Replica de Hyper-Virtualizacion
+\item Agrupación de clusteres de Hype-Virtualizacion
+\item Control de acceso dinámico
+\item Migración en vivo sin almacenamiento compartido
+\item Espacios de almacenamiento con niveles
+\item Volumen compartido de cluster
+\item Sitio web multiempresa de alta densidad
+\item Escalabilidad compatible con NUMA
+\item Restricciones de IP dinamica
+\item Administración de direcciones IP
+\item Administración multiservidor
+\end{itemize}
+\newpage
+\section{¿Qué empresa hay detrás de Ubuntu? ¿Que otros productos/servicios ofrece?}
+La empresa que desarrolla ubuntu es Canonical, es una compañía que ofrece el sistema de manera gratuita, y se financia por medio de servicios vinculados al sistema operativo y vendiendo soporte técnico.
+También ofrece productos como una version orientada para servidores, Ubuntu Server, una version para empresas, Ubuntu Business Desktop Remix, una para televisores, Ubuntu TV, otra version para tablets Ubuntu Tablet, también para teléfonos, Ubuntu Phone, y una para usar el escritorio desde teléfonos inteligentes, Ubuntu for Android.\footnote{\url{https://es.wikipedia.org/wiki/Ubuntu}}
+\section{¿Qué relación tiene esta distribución con Red Hat y con el proyecto Fedora?}
+CentOS es una bifurcación de la distribución Linux Red Hat Enterprise Linux orientada a ofrecer al usuario un software de clase empresarial gratuito, compilado por voluntarios a partir del código fuente publicado por Red Hat. \footnote{\url{https://es.wikipedia.org/wiki/CentOS}}
+Mientras Fedora es una distribución Linux para propósitos generales que se caracteriza por ser un sistema estable y cuenta con el respaldo y la promoción de Red Hat.
+\footnote{\url{https://es.wikipedia.org/wiki/Fedora}}
+\section{Indique que otros SO se utilizan en servidores y el porcentaje de uso}
+El porcentaje de uso de los sistemas operativos en servidores es el siguiente: \footnote{\url{www.vps.net/blog/2012/04/09/operating-system-deployment-stats/}}
+
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.33]{2012-04-09_1305.png}  
+\label{figura1:}
+\caption{Uso de SO en servidores}
+\end{figure}
+\newpage
+\section{¿Qué diferencia hay entre RAID mediante SW y mediante HW?}
+El RAID por software el procesador de la maquina se ocupa de hacer los cálculos, tomar todas las decisiones y determinar los eventos relacionados con el RAID, es muy barato, en contra tiene que consumirá recursos del procesador solo para mantener el RAID.
+El RAID por hardware se necesita una tarjeta RAID, ese sistema permite que ni el SO ni el procesador gastarán recursos atendiendo al RAID, la tarjeta es la que atiende y hace todas las operaciones a los discos. Es muy rápido, fácil de configurar y si en caso de que falle un disco, se saca el disco dañado se pone otro y la tarjeta hace proceso de replica, en contra tiene pues lo lógico, este sistema cuesta mas pasta que el anterior.
+\footnote{\url{http://www.ecualug.org/?q=2008/05/31/comos/4_¿raid_por_software_o_raid_por_hardware}}
+
+\section{Cuestión 9}
+\subsection{¿Qué es LVM?}
+LVM es un método de localización del espacio disco duro en volúmenes lógicos que pueden ser fácilmente redimensionados en vez de particiones. Con LVM, el disco duro o grupo de discos está localizado para uno o mas volúmenes físicos. Un volumen físico no abarca mas de una unidad.
+\footnote{\url{http://web.mit.edu/rhel-doc/3/rhel-sag-es-3/ch-lvm-intro.html}}
+\subsection{¿Qué ventaja tiene para un servidor de gama baja?}
+Con el uso de LVM el disco completo puede ser asignado a un único grupo lógico y definir distintos volúmenes lógicos para almacenar distintos directorios. En el caso que nos quedásemos sin espacio podemos redimensionar el espacio de los distintos volúmenes lógicos
+\footnote{\url{https://es.wikipedia.org/wiki/Logical_Volume_Manager}}
+\subsection{Si se va a tener un servidor web, ¿le daría un tamaño grande o pequeño a /var?}
+Si, ya que por defecto la carpeta raíz del servidor web se encuentra en /var/www. Todos los documentos que se encuentran dentro de esta carpeta raíz del servidor web sera accesibles vía web por lo que si nuestra pagina web es grande y compleja lo lógico es que hubiese en ese directorio muchos archivos y por lo cual /var deberia de tener un espacio grande.\footnote{\url{http://www.ite.educacion.es/formacion/materiales/85/cd/linux/m3/organizacin_del_sitio_web.html}}
+\newpage
+\section{¿Debemos cifrar tambien el volumen que contiene el espacio para swap? ¿y el volumen en el que montaremos /boot?}
+Debería de cifrarse swap, ya que si solo se cifra la partición /home el instalador puede arrojar un error, ya que a través del área de intercambio swap se podría extraer información sensible o incluso recuperar partes de la clave de cifrado.
+/boot no se debe cifrar porque ubuntu no te deja básicamente. 
+\section{¿Qué otro tipo de usos de una partición le permite configurar el asistente de instalación? ¿Cual es la principal diferencia entre ext4 y ext2?}
+Los tipos de uso se muestran a continuación:
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{tiposdeuso.png}  
+\label{figura2:}
+\caption{tipos de uso que el asistente permite configurar}
+\end{figure}
+La principal diferencia es el journaling, esto se basa en llevar un registro diario en el que se almacena la información necesaria para restablecer los datos del sistema afectados por un cambio, en caso de que falle.
+Además se introducen los extens, que se utilizan para reemplazar el esquema por bloques utilizado en ext2. Los extends mejoran el rendimiento al trabajar con ficheros de gran tamaño.
+\section{Muestre como ha quedado el disco particionado una vez el sistema esta instalado (lsblk)}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{lsblk.png}  
+\label{figura3:}
+\caption{Estado del disco particionado}
+\end{figure}
+\section{Cuestion 13}
+\subsection{¿Cómo ha hecho el disco 2 arrancable?}
+Se hace con sudo grub-install /dev/sdb. Osea instalamos el grub en el disco 2.
+\subsection{¿Qué hace el comando grub-install?}
+Instala el GRUB en el disco
+\subsection{¿Qué hace el comando dd?}
+Copia un archivo y lo convierte al formato indicado en los operandos, por ejemplo para copiar archivos de un disco a otro.
+\section{ Muestre como ha comprobado que el RAID1 funciona}
+Para comprobar que el RAID1 funciona vamos a crear un archivo por ejemplo prueba.txt.
+
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{txt.png}  
+\label{figura4:}
+\caption{Creación archivo}
+\end{figure}
+
+Con la orden mdadm marcamos el disco 1 como defectuoso
+
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{mdadm1.png}  
+\label{figura5:}
+\caption{Marcar disco defectuoso}
+\end{figure}
+
+Una vez hecho esto, borramos el disco con mdadm
+
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{mdadm2.png}  
+\label{figura6:}
+\caption{Eliminar disco defectuoso}
+\end{figure}
+
+apagamos la maquina y desde virtual box eliminamos el primer disco
+
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{VB.png}  
+\label{figura7:}
+\caption{Eliminar disco Virtual Box}
+\end{figure}
+
+Arrancamos de nuevo la maquina virtual. Una vez dentro hacemos ls y vemos que tenemos el archivo prueba.txt y al ejecutar la orden lsblk vemos que solo tiene un disco
+
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{comprobar.png}  
+\label{figura9:}
+\caption{Comprobación}
+\end{figure}
+
+\section{¿Que diferencia hay entre Standard y DataCenter?}
+La diferencia entre Standard y DataCenter es el numero de máquinas virtuales. Standard le da derecho a ejecutar hasta dos VMs en hasta dos procesadores. DataCenter le da derecho a ejecutar un numero ilimitado de VMs en hasta dos procesadores. \footnote{\url{http://www.internetya.co/windows-server-2012-ediciones-datacenter-y-standard/}}
+\section{Continúe usted con el proceso de definición de RAID1 para los dos discos de 50MB que ha creado. Muestre el proceso con capturas de pantalla}
+Partimos desde esta pantalla:
+\begin{figure}[H] 
+
+\includegraphics[scale=0.3]{fasei.png}  
+\label{figura10:}
+\caption{Fase inicial}
+\end{figure}
+Le damos botón derecho sobre el disco uno y pulsamos nuevo volumen reflejado como indica la figura
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{paso1.png}  
+\label{figura11:}
+\caption{Paso 1}
+\end{figure}
+Agregamos los dos discos
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{paso2.png}  
+\label{figura12:}
+\caption{Paso 2}
+\end{figure}
+Seleccionamos la letra del disco
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{paso3.png}  
+\label{figura13:}
+\caption{Paso 3}
+\end{figure}
+Elegimos el formateo con NFTS
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{paso4.png}  
+\label{figura14:}
+\caption{Paso 4}
+\end{figure}
+Pulsamos en finalizar el proceso
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{paso5.png}  
+\label{figura15:}
+\caption{Paso 5}
+\end{figure}
+Y así es como debería de quedar nuestros discos
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.3]{final.png}  
+\label{figura16:}
+\caption{Estado final}
+\end{figure}
+
+\section{Explique brevemente que diferencias hay entre los tres tipos de conexión que permite VMSW para las MVS: NAT, HOST-ONLY y Bridge}
+En el tipo Bridge la maquina virtual sera como una maquina real conectada a la red, la maquina virtual sera totalmente independiente en la red como un equipo mas.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{bridge.png}  
+\label{figura17:}
+\caption{Estructura modo bridge}
+\end{figure}
+En el tipo Host-only la maquina virtual solo puede acceder al equipo y a otras máquinas virtuales de la red VMware, en este tipo la maquina virtual esta aislada totalmente de la red local.
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{hostonly.png}  
+\label{figura18:}
+\caption{Estructura modo Host-Only}
+\end{figure}
+En el tipo NAT la maquina virtual se esconde detrás de la IP de la maquina real, las máquinas virtuales en la misma dirección red pueden acceder a ella directamente, cuando la maquina virtual intenta conectarse a la red local lo hace a través de un Firewall propio ya que no se encuentra dentro de la red de la maquina real.
+\footnote{\url{http://www.asirlasgalletas.com/2011/01/modo-bridge-host-only-y-nat-explicado.html}}
+\begin{figure}[H] 
+\centering
+\includegraphics[scale=0.5]{nat.png}  
+\label{figura19:}
+\caption{Estructura NAT}
+\end{figure}
+
+
+\section{¿Qué relación hay entre los atajos de teclado de emacs y los de la consola bash? ¿y entre los de vi y las paginas del manual?}
+La relación que existe entre los atajos de teclado entre emacs y los de la consola bash es que son los mismo atajos ya que están desarrollados por GNU.
+Entre los del editor de texto vi y las paginas del manual igual.
+\end{document}
